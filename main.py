@@ -1,19 +1,13 @@
-from functools import lru_cache
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, FileResponse
-from pydantic_settings import BaseSettings, SettingsConfigDict
-
-class Settings(BaseSettings):
-    NEWS_API_KEY: str
-    DEFAULT_PAGE_SIZE: int = 5
-    model_config = SettingsConfigDict(env_file=".env")
+import backend
 
 app = FastAPI()
-
-@lru_cache
-def get_config():
-    return Settings()
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
     return FileResponse("index.html")
+
+@app.get("/search")
+async def search(title: str, start_date: str|None=None, end_date: str|None=None):
+    return backend.download_news(title, start_date, end_date)

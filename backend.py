@@ -1,12 +1,10 @@
 import httpx
 
-from main import get_config
+from config import get_config
 
-def download_news(title: str, start_date: str | None = None, end_date: str | None = None, page_size: int | None = None):
+def download_news(title: str, start_date: str | None = None, end_date: str | None = None, page_size: int | None = None) -> list[dict]:
     api_key = get_config().NEWS_API_KEY
     page_size = get_config().DEFAULT_PAGE_SIZE if page_size is None else page_size
-
-    print(api_key)
 
     url = f"https://newsapi.org/v2/everything?q={title}&language=en&pageSize={page_size}"
     if start_date is not None:
