@@ -2,7 +2,7 @@ from fastapi.params import Form
 
 import backend
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
 
@@ -23,9 +23,10 @@ async def top_articles(request: Request):
     request_results = backend.download_top()
     return process_results(request, request_results)
 
-@app.post("/translate", response_class=HTMLResponse)
-async def translate(request: Request, text_to_translate: str=Form()):
-    ...
+@app.post("/translate", response_class=JSONResponse)
+async def translate(request: Request, title: str=Form(), description: str=Form()):
+    translation = backend.translate(title, description)
+    return translation
 
 def process_results(request: Request, results: dict, title: str | None = None, translate: bool = True) -> _TemplateResponse:
     if title is None:
