@@ -18,5 +18,5 @@ Application utilizes [NewsAPI](https://newsapi.org/) and [DeepL API](https://www
 5. The app will be available at `http://localhost:8000`.
 
 ## Screenshots
-![img.png](img/img.png)
-![img.png](img1/img.png)
+![img.png](img/menu.png)
+![img.png](img/article_display.png)
