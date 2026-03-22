@@ -11,7 +11,7 @@ Application utilizes [NewsAPI](https://newsapi.org/) and [DeepL API](https://www
 - Translate articles to Polish (all the articles are automatically in English).
 
 ## Installation
-1. Clone the repository: ```git clone LINK HERE cd NewsApp```.
+1. Clone the repository: ```git clone https://github.com/krzysztof-kopel/NewsApp cd NewsApp```.
 2. Install dependencies: ```pip install -r requirements.txt```.
 3. Crete `.env` file and add your API keys (you can check .env.example for details).
 4. Run the application: ```python main.py```.
