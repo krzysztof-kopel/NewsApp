@@ -1,4 +1,5 @@
 import httpx
+from httpx import Response
 
 from config import get_config
 
@@ -17,6 +18,21 @@ def download_news(title: str, start_date: str | None = None, end_date: str | Non
     }
     api_result = httpx.get(url, headers=headers)
 
+    return process_articles(api_result)
+
+def download_top(page_size: int | None = None) -> dict:
+    api_key = get_config().NEWS_API_KEY
+    page_size = get_config().DEFAULT_PAGE_SIZE if page_size is None else page_size
+
+    url = f"https://newsapi.org/v2/top-headlines?pageSize={page_size}&language=en"
+    headers = {
+        "X-Api-Key": api_key
+    }
+    api_result = httpx.get(url, headers=headers)
+
+    return process_articles(api_result)
+
+def process_articles(api_result: Response) -> dict:
     if "articles" in api_result.json():
         articles = api_result.json()["articles"]
         # Deleting time from datetime

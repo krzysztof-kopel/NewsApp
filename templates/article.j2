@@ -22,7 +22,9 @@
              alt="article image" class="article-image">
         <br><br>
     {% endif %}
-{{ article.description }}
-<br>
+    {% if article.description %}
+        {{ article.description }}
+        <br>
+    {% endif %}
 <a href="{{ article.url }}">Full version</a>
 {% endmacro %}
