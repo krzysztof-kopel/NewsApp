@@ -1,7 +1,7 @@
-from fastapi.params import Form
-
+import asyncio
 import backend
 from fastapi import FastAPI, Request
+from fastapi.params import Form
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
@@ -13,7 +13,7 @@ templates = Jinja2Templates("templates")
 async def root():
     return FileResponse("templates/index.html")
 
-@app.get("img/icon.svg", response_class=FileResponse)
+@app.get("/img/icon.svg", response_class=FileResponse)
 def icon():
     return FileResponse("img/icon.svg", media_type="image/svg+xml")
 
@@ -23,22 +23,24 @@ async def search(request: Request, title: str, start_date: str|None=None, end_da
         return handle_error(request, "You can't request that many articles.")
     elif start_date is not None and end_date is not None and start_date > end_date:
         return handle_error(request, "Start date must happen earlier than end date.")
-    request_result = backend.download_news(title, start_date, end_date, page_size)
+    request_result = await backend.download_news(title, start_date, end_date, page_size)
     return process_results(request, request_result, title)
 
 @app.get("/top", response_class=HTMLResponse)
 async def top_articles(request: Request):
-    request_results = backend.download_top()
+    request_results = await backend.download_top()
     return process_results(request, request_results)
 
 @app.post("/translate", response_class=HTMLResponse)
 async def translate(request: Request, source_name: str=Form(), publishedAt: str=Form(), title: str=Form(),
                     author: str=Form(), urlToImage: str=Form(), description: str=Form(), url: str=Form()):
-    translation = backend.translate(title, description)
+
+    gather = await asyncio.gather(backend.translate(title), backend.translate(description))
+    title_trans, desc_trans = gather
     return templates.TemplateResponse(
         request=request, name="translation.j2", context={
-            "article": {"source": {"name": source_name}, "publishedAt": publishedAt, "title": translation["title"],
-                              "author": author, "urlToImage": urlToImage, "description": translation["description"],
+            "article": {"source": {"name": source_name}, "publishedAt": publishedAt, "title": title_trans,
+                              "author": author, "urlToImage": urlToImage, "description": desc_trans,
                               "url": url}
         }
     )
