@@ -1,0 +1,28 @@
+{% macro display_article(article) %}
+    <style>
+    .article-image {
+        width: 20%;
+        height: 200px;
+
+        object-fit: cover;
+
+        object-position: center;
+    }
+</style>
+<hr>
+<h3>{{article.source.name}}, {{article.publishedAt}}</h3>
+<h2>{{article.title}}</h2>
+    {% if article.author %}
+        <i>{{article.author}}</i>
+        <br><br>
+    {% endif %}
+
+    {% if article.urlToImage %}
+        <img src="{{article.urlToImage}}"
+             alt="article image" class="article-image">
+        <br><br>
+    {% endif %}
+{{ article.description }}
+<br>
+<a href="{{ article.url }}">Full version</a>
+{% endmacro %}

@@ -1,0 +1,15 @@
+{% from "article.j2" import display_article %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search results</title>
+</head>
+<body>
+    <h1>Search results for "{{ title }}"</h1>
+    {% for a in article_list %}
+        {{ display_article(a) }}
+    {% endfor %}
+</body>
+</html>

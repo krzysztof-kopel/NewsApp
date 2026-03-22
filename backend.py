@@ -2,7 +2,7 @@ import httpx
 
 from config import get_config
 
-def download_news(title: str, start_date: str | None = None, end_date: str | None = None, page_size: int | None = None) -> list[dict]:
+def download_news(title: str, start_date: str | None = None, end_date: str | None = None, page_size: int | None = None) -> dict:
     api_key = get_config().NEWS_API_KEY
     page_size = get_config().DEFAULT_PAGE_SIZE if page_size is None else page_size
 
@@ -16,7 +16,15 @@ def download_news(title: str, start_date: str | None = None, end_date: str | Non
         "X-Api-Key": api_key
     }
     api_result = httpx.get(url, headers=headers)
-    return api_result.json()["articles"]
+
+    if "articles" in api_result.json():
+        articles = api_result.json()["articles"]
+        # Deleting time from datetime
+        for i in range(len(articles)):
+            articles[i]["publishedAt"] = articles[i]["publishedAt"][:10]
+
+        return {"status": "ok", "articles": articles}
+    return api_result.json()
 
 if __name__ == "__main__":
     print(download_news("Donald Trump"))
