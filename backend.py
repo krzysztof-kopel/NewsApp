@@ -32,6 +32,24 @@ def download_top(page_size: int | None = None) -> dict:
 
     return process_articles(api_result)
 
+def translate(title: str, description: str) -> dict[str, str]:
+    api_key = get_config().DEEPL_API_KEY
+
+    url = "https://api-free.deepl.com/v2/translate"
+    headers = {
+        "Authorization": f"DeepL-Auth-Key {api_key}",
+        "Content-type": "application/json"
+    }
+
+    request = {
+        "text": [title, description],
+        "target_lang": "PL"
+    }
+
+    api_results = httpx.post(url, headers=headers, json=request)
+    api_results = api_results.json()
+    return {"title": api_results["translations"][0]["text"], "description": api_results["translations"][1]["text"]}
+
 def process_articles(api_result: Response) -> dict:
     if "articles" in api_result.json():
         articles = api_result.json()["articles"]
@@ -44,3 +62,4 @@ def process_articles(api_result: Response) -> dict:
 
 if __name__ == "__main__":
     print(download_news("Donald Trump"))
+    print(translate("A simple title", "A simple description"))
