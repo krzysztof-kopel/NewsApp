@@ -13,9 +13,9 @@ templates = Jinja2Templates("templates")
 async def root():
     return FileResponse("templates/index.html")
 
-@app.get("/icon.svg", response_class=FileResponse)
+@app.get("img/icon.svg", response_class=FileResponse)
 def icon():
-    return FileResponse("icon.svg", media_type="image/svg+xml")
+    return FileResponse("img/icon.svg", media_type="image/svg+xml")
 
 @app.get("/search", response_class=HTMLResponse)
 async def search(request: Request, title: str, start_date: str|None=None, end_date: str|None=None, page_size: int|None = None):
