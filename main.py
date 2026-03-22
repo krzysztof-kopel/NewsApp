@@ -15,6 +15,10 @@ async def root():
 
 @app.get("/search", response_class=HTMLResponse)
 async def search(request: Request, title: str, start_date: str|None=None, end_date: str|None=None, page_size: int|None = None):
+    if page_size is not None and page_size > 10:
+        return handle_error(request, "You can't request that many articles.")
+    elif start_date is not None and end_date is not None and start_date > end_date:
+        return handle_error(request, "Start date must happen earlier than end date.")
     request_result = backend.download_news(title, start_date, end_date, page_size)
     return process_results(request, request_result, title)
 
@@ -35,6 +39,13 @@ async def translate(request: Request, source_name: str=Form(), publishedAt: str=
         }
     )
 
+def handle_error(request: Request, message: str) -> _TemplateResponse:
+    return templates.TemplateResponse(
+        request=request, name="error.j2", context={
+            "message": message
+        }
+    )
+
 def process_results(request: Request, results: dict, title: str | None = None, translate: bool = True) -> _TemplateResponse:
     if title is None:
         title = "top articles"
@@ -42,9 +53,14 @@ def process_results(request: Request, results: dict, title: str | None = None, t
         title = f'"{title}"'
     if results["status"] == "ok":
         articles = results["articles"]
-        return templates.TemplateResponse(
-            request=request, name="article_list.j2", context={"article_list": articles, "title": title, "translate": translate}
-        )
+        if len(articles) >= 1:
+            return templates.TemplateResponse(
+                request=request, name="article_list.j2", context={"article_list": articles, "title": title, "translate": translate}
+            )
+        else:
+            return templates.TemplateResponse(
+                request=request, name="article_list.j2", context={"title": title}
+            )
     else:
         return templates.TemplateResponse(
             request=request, name="error.j2", context={"message": results["message"]}
