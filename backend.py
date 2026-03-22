@@ -7,7 +7,7 @@ def download_news(title: str, start_date: str | None = None, end_date: str | Non
     api_key = get_config().NEWS_API_KEY
     page_size = get_config().DEFAULT_PAGE_SIZE if page_size is None else page_size
 
-    url = f"https://newsapi.org/v2/everything?q={title}&language=en&pageSize={page_size + 1}"
+    url = f"https://newsapi.org/v2/everything?q={title}&language=en&pageSize={page_size}"
     if start_date is not None:
         url += f"&from={start_date}"
     if end_date is not None:
@@ -24,7 +24,7 @@ def download_top(page_size: int | None = None) -> dict:
     api_key = get_config().NEWS_API_KEY
     page_size = get_config().DEFAULT_PAGE_SIZE if page_size is None else page_size
 
-    url = f"https://newsapi.org/v2/top-headlines?pageSize={page_size + 1}&language=en"
+    url = f"https://newsapi.org/v2/top-headlines?pageSize={page_size}&language=en"
     headers = {
         "X-Api-Key": api_key
     }

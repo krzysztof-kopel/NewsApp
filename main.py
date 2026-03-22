@@ -2,7 +2,7 @@ from fastapi.params import Form
 
 import backend
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
 
@@ -12,6 +12,10 @@ templates = Jinja2Templates("templates")
 @app.get("/", response_class=HTMLResponse)
 async def root():
     return FileResponse("templates/index.html")
+
+@app.get("/icon.svg", response_class=FileResponse)
+def icon():
+    return FileResponse("icon.svg", media_type="image/svg+xml")
 
 @app.get("/search", response_class=HTMLResponse)
 async def search(request: Request, title: str, start_date: str|None=None, end_date: str|None=None, page_size: int|None = None):
@@ -55,7 +59,9 @@ def process_results(request: Request, results: dict, title: str | None = None, t
         articles = results["articles"]
         if len(articles) >= 1:
             return templates.TemplateResponse(
-                request=request, name="article_list.j2", context={"article_list": articles, "title": title, "translate": translate}
+                request=request, name="article_list.j2", context={"article_list": articles,
+                                                                  "number_of_articles": len(articles),
+                                                                  "title": title, "translate": translate}
             )
         else:
             return templates.TemplateResponse(
