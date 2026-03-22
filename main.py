@@ -23,10 +23,13 @@ async def top_articles(request: Request):
     request_results = backend.download_top()
     return process_results(request, request_results)
 
-@app.post("/translate", response_class=JSONResponse)
-async def translate(request: Request, title: str=Form(), description: str=Form()):
+@app.post("/translate", response_class=HTMLResponse)
+async def translate(request: Request, source_name: str=Form(), publishedAt: str=Form(), title: str=Form(),
+                    author: str=Form(), urlToImage: str=Form(), description: str=Form(), article: str=Form()):
     translation = backend.translate(title, description)
-    return translation
+    return templates.TemplateResponse(
+        request=request, name="article_list.j2"
+    )
 
 def process_results(request: Request, results: dict, title: str | None = None, translate: bool = True) -> _TemplateResponse:
     if title is None:

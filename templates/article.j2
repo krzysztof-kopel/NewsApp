@@ -27,8 +27,13 @@
 {{ article.description }}
 {% if translate %}
     <form method="POST" action="/translate">
+        <input type="hidden" value="{{ article.source.name }}" name="source_name">
+        <input type="hidden" value="{{ article.publishedAt }}" name="publishedAt">
         <input type="hidden" value="{{article.title}}" name="title">
+        <input type="hidden" value="{{ article.author }}" name="author">
+        <input type="hidden" value="{{ article.urlToImage }}" name="urlToImage">
         <input type="hidden" value="{{ article.description }}" name="description">
+        <input type="hidden" value="{{ article.url }}" name="url">
         <input type="submit" value="Translate">
     </form>
 {% endif %}
