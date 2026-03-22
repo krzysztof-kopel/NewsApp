@@ -14,8 +14,8 @@ async def root():
     return FileResponse("templates/index.html")
 
 @app.get("/search", response_class=HTMLResponse)
-async def search(request: Request, title: str, start_date: str|None=None, end_date: str|None=None):
-    request_result = backend.download_news(title, start_date, end_date)
+async def search(request: Request, title: str, start_date: str|None=None, end_date: str|None=None, page_size: int|None = None):
+    request_result = backend.download_news(title, start_date, end_date, page_size)
     return process_results(request, request_result, title)
 
 @app.get("/top", response_class=HTMLResponse)
@@ -25,10 +25,14 @@ async def top_articles(request: Request):
 
 @app.post("/translate", response_class=HTMLResponse)
 async def translate(request: Request, source_name: str=Form(), publishedAt: str=Form(), title: str=Form(),
-                    author: str=Form(), urlToImage: str=Form(), description: str=Form(), article: str=Form()):
+                    author: str=Form(), urlToImage: str=Form(), description: str=Form(), url: str=Form()):
     translation = backend.translate(title, description)
     return templates.TemplateResponse(
-        request=request, name="article_list.j2"
+        request=request, name="translation.j2", context={
+            "article": {"source": {"name": source_name}, "publishedAt": publishedAt, "title": translation["title"],
+                              "author": author, "urlToImage": urlToImage, "description": translation["description"],
+                              "url": url}
+        }
     )
 
 def process_results(request: Request, results: dict, title: str | None = None, translate: bool = True) -> _TemplateResponse:
