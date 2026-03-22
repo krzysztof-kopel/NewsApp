@@ -1,4 +1,4 @@
-{% macro display_article(article) %}
+{% macro display_article(article, translate) %}
     <style>
     .article-image {
         width: 20%;
@@ -11,20 +11,28 @@
 </style>
 <hr>
 <h3>{{article.source.name}}, {{article.publishedAt}}</h3>
-<h2>{{article.title}}</h2>
-    {% if article.author %}
-        <i>{{article.author}}</i>
-        <br><br>
-    {% endif %}
 
-    {% if article.urlToImage %}
-        <img src="{{article.urlToImage}}"
-             alt="article image" class="article-image">
-        <br><br>
-    {% endif %}
-    {% if article.description %}
-        {{ article.description }}
-        <br>
-    {% endif %}
+<h2>{{article.title}}</h2>
+{% if article.author %}
+    <i>{{article.author}}</i>
+    <br><br>
+{% endif %}
+
+{% if article.urlToImage %}
+    <img src="{{article.urlToImage}}"
+         alt="article image" class="article-image">
+    <br><br>
+{% endif %}
+
+{{ article.description }}
+{% if translate %}
+    <form method="POST" action="/translate">
+        <input type="hidden" value="{{article.title}}" name="title">
+        <input type="hidden" value="{{ article.description }}" name="description">
+        <input type="submit" value="Translate">
+    </form>
+{% endif %}
+<br>
+
 <a href="{{ article.url }}">Full version</a>
 {% endmacro %}

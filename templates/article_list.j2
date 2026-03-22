@@ -9,7 +9,7 @@
 <body>
     <h1>Search results for {{ title }}</h1>
     {% for a in article_list %}
-        {{ display_article(a) }}
+        {{ display_article(a, translate) }}
     {% endfor %}
 </body>
 </html>
